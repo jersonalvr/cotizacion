@@ -446,11 +446,11 @@ def main():
                 zip_io = BytesIO()
                 with zipfile.ZipFile(zip_io, mode='w', compression=zipfile.ZIP_DEFLATED) as zipf:
                     # Agregar el documento de cotización
-                    zipf.writestr('Formatos.docx', doc_io.getvalue())
+                    zipf.writestr('Formato de Cotización.docx', doc_io.getvalue())
                     
                     # Agregar el TDR original
                     pdf_file.seek(0)  # Reiniciar el puntero del archivo
-                    zipf.writestr('TDR.pdf', pdf_file.getvalue())
+                    zipf.writestr('6. Copia de Terminos de Referencia.pdf', pdf_file.getvalue())
 
                 zip_io.seek(0)
                 st.success("¡Cotización generada correctamente!")
