@@ -497,10 +497,37 @@ def main():
     cci = st.text_input("CCI (editable)", value=generar_cci(banco_seleccionado, cuenta), key='cci_input')
     if cci:
         st.session_state.form_data['cci'] = cci
-
-    # Oferta total
+        
+    # Sección de oferta económica
     st.header("Oferta Económica")
-    oferta_total = st.number_input("OFERTA TOTAL (S/)", min_value=2000.0, format="%.2f")
+
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+        oferta_total = st.number_input(
+            "OFERTA TOTAL (S/)",
+            min_value=0.0,
+            value=2000.0,  # Valor sugerido inicial
+            step=10.0,     # Incrementos/decrementos de 10
+            format="%.2f",
+            help="Valor sugerido: S/ 2,000.00. Puedes ajustar el monto usando las flechas (±10) o ingresando directamente el valor deseado."
+        )
+
+    with col2:
+        st.markdown("""
+        <style>
+        .small-font {
+            font-size: 0.9em;
+            color: #666;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        st.markdown('<p class="small-font">Sugerido: S/ 2,000.00<br>Incrementos: ± S/ 10.00</p>', unsafe_allow_html=True)
+
+    # Mostrar el valor ingresado con formato de moneda
+    if oferta_total > 0:
+        st.write(f"Monto ingresado: S/ {oferta_total:,.2f}")
 
     # Botón de envío
     if st.button("Generar cotizacion"):
