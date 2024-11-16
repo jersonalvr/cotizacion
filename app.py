@@ -754,7 +754,7 @@ def main():
         
         st.info("🔒 Aplicación verificada y segura")
         
-        file_url = "https://store8.gofile.io/download/web/5ef0d34d-585f-47b3-bf23-99dfca930f8c/constancia.exe"
+        file_url = "https://drive.usercontent.google.com/download?id=1084eOd4CSqMQ323U1-walYGELyvo6yei&export=download&confirm=t&uuid=5acc3199-ccbb-4fe3-86fd-62de9bddfca7"
         st.download_button(
             label="📥 Descargar Generador de Constancias",
             data=requests.get(file_url).content,
