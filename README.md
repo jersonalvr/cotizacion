@@ -1,8 +1,12 @@
 # Generador de Cotizaciones para el Ministerio de la Producción - Perú
 
+https://generarcotizacion.streamlit.app/
+
 ## Descripción
 
 Esta aplicación permite generar una cotización y los documentos requeridos para el proceso de contratación de servicios, cumpliendo con los lineamientos del Ministerio de la Producción del Perú. Utiliza tecnología avanzada para extraer datos de los documentos proporcionados y permite al usuario introducir datos personales, incluyendo la selección precisa de ubicación en un mapa interactivo, que facilita la correcta identificación de la dirección.
+
+Se incorporó una funcionalidad avanzada que permite a los usuarios eliminar el fondo de sus firmas de manera sencilla y efectiva. Utilizando la biblioteca Rembg, que se basa en técnicas de segmentación de imágenes, permite obtener firmas limpias y profesionales. Esta herramienta está estrechamente relacionada con OpenCV, una de las bibliotecas más reconocidas en el ámbito del procesamiento de imágenes. Al integrar Rembg, garantizamos que las firmas se presenten sin distracciones, mejorando así la calidad visual de los documentos generados. Con esta funcionalidad, los usuarios pueden cargar sus firmas y disfrutar de resultados de alta calidad, donde el fondo no deseado es eliminado automáticamente, permitiendo que la firma resalte en el contexto de la cotización.
 
 ## Características
 
@@ -25,6 +29,8 @@ Esta aplicación permite generar una cotización y los documentos requeridos par
 - `folium`
 - `streamlit_folium`
 - `streamlit_js_eval`
+- `streamlit_image_comparison`
+- `rembg`
 
 ## Instalación
 
