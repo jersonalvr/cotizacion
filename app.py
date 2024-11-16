@@ -711,62 +711,58 @@ def main():
                     file_name="cotizacion.zip",
                     mime="application/zip",
                 )
-    # Contenedor principal
-    main_container = st.container()
-    
-    with main_container:
-        # Información sobre requisitos con estilo mejorado
-        st.warning("⚠️ Requisito: Google Chrome debe estar instalado en su equipo")
-        
-        # Botón de redirección a Chrome
-        chrome_col1, chrome_col2, chrome_col3 = st.columns([1,2,1])
-        with chrome_col2:
-            st.link_button(
-                "🌐 Descargar Google Chrome",
-                "https://www.google.com/intl/es-419/chrome/dr/download/",
-                use_container_width=True,
-            )
-    
-        st.markdown("---")
-    
-        # Sección de descarga de la aplicación
+                
+    st.markdown("""
+        <h3 style='text-align: center; margin-bottom: 2rem;'>
+            Descarga ahora el generador de constancias RNP, RUC, RNSSC
+        </h3>
+    """, unsafe_allow_html=True)
+
+    # Crear dos columnas
+    col1, col2 = st.columns(2)
+
+    # Columna izquierda - Instrucciones
+    with col1:
+        st.markdown("### 📝 Instrucciones de uso:")
         st.markdown("""
-            <h2 style='text-align: center; color: #2E7D32;'>
-                Descarga la Aplicación
-            </h2>
-        """, unsafe_allow_html=True)
-    
-        download_col1, download_col2, download_col3 = st.columns([1,2,1])
+        1. **Requisitos previos:**
+        - Google Chrome instalado en su equipo
+        - Conexión a internet estable
         
-        with download_col2:
-            # URL del archivo
-            file_url = "https://store8.gofile.io/download/web/5ef0d34d-585f-47b3-bf23-99dfca930f8c/constancia.exe"
-            
-            # Botón de descarga estilizado
-            st.download_button(
-                label="📥 Descargar Generador de Constancias",
-                data=requests.get(file_url).content,
-                file_name="constancia.exe",
-                mime="application/x-msdownload",
-                use_container_width=True,
-            )
-    
-        # Instrucciones de uso
-        st.markdown("---")
-        st.markdown("""
-        ### 📝 Instrucciones de uso:
-        1. Si no tiene Chrome instalado, use el botón 'Descargar Google Chrome'
-        2. Una vez tenga Chrome, descargue la aplicación con el botón verde
-        3. Ejecute el archivo descargado
-        4. ¡Comience a generar sus constancias!
+        2. **Proceso de instalación:**
+        - Si no tiene Chrome, descárguelo primero
+        - Descargue el Generador de Constancias
+        - Ejecute el archivo descargado
+        
+        3. **Funcionalidades:**
+        - Genera constancias RNP
+        - Obtiene información RUC
+        - Consulta RNSSC
         """)
-    
-        # Nota de seguridad
-        st.markdown("---")
-        st.warning("""
-            🔒 **Nota de seguridad**: Esta aplicación es segura y ha sido verificada. 
-            Si su navegador muestra una advertencia de seguridad, puede proceder con confianza.
-        """)
+
+    # Columna derecha - Botones y advertencias
+    with col2:
+        st.warning("⚠️ Requiere Google Chrome para funcionar")
+        
+        st.link_button(
+            "🌐 Descargar Google Chrome",
+            "https://www.google.com/intl/es-419/chrome/dr/download/",
+            use_container_width=True,
+        )
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        st.info("🔒 Aplicación verificada y segura")
+        
+        file_url = "https://store8.gofile.io/download/web/5ef0d34d-585f-47b3-bf23-99dfca930f8c/constancia.exe"
+        st.download_button(
+            label="📥 Descargar Generador de Constancias",
+            data=requests.get(file_url).content,
+            file_name="constancia.exe",
+            mime="application/x-msdownload",
+            use_container_width=True,
+        )
+        
     crear_donation_footer(base_dir)
     
 if __name__ == "__main__":
