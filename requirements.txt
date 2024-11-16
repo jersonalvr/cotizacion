@@ -10,3 +10,5 @@ python-docx==1.1.2
 docx==0.2.4
 pyperclip==1.9.0
 st_copy_to_clipboard==0.1.6
+rembg==2.0.59
+streamlit_image_comparison==0.0.4
