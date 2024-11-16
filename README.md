@@ -1,6 +1,6 @@
 # Generador de Cotizaciones para el Ministerio de la Producción - Perú
 
-https://generarcotizacion.streamlit.app/
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://generarcotizacion.streamlit.app/)
 
 ## Descripción
 
