@@ -1,6 +1,7 @@
 # app.py
 import streamlit as st
 import requests
+from rembg import remove
 from PIL import Image
 import os
 from geopy.geocoders import Nominatim
@@ -17,6 +18,7 @@ from io import BytesIO
 import zipfile
 import pyperclip
 from st_copy_to_clipboard import st_copy_to_clipboard
+from streamlit_image_comparison import image_comparison
 
 # Determinar la ruta base de la aplicación
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -115,6 +117,106 @@ def extraer_dias(pdf_file):
         dias = match.group(1)
         return dias
     return "DÍAS NO ENCONTRADOS"
+
+def obtener_valor_sugerido(dias):
+    """
+    Determina el valor sugerido basado en los días de ejecución
+    """
+    try:
+        dias = int(dias)
+        if dias <= 30:
+            return 2000.0
+        elif dias <= 60:
+            return 4000.0
+        elif dias <= 90:
+            return 6000.0
+        elif dias <= 120:
+            return 8000.0
+        else:
+            return 8000.0  # Valor máximo por defecto
+    except (ValueError, TypeError):
+        return 2000.0  # Valor por defecto si hay error en la conversión
+
+def procesar_firma(firma_file, remover_fondo=False):
+    """
+    Procesa la imagen de la firma, opcionalmente removiendo el fondo.
+    
+    Args:
+        firma_file: Archivo de imagen subido
+        remover_fondo: Boolean indicando si se debe remover el fondo
+    
+    Returns:
+        BytesIO: Imagen procesada en formato BytesIO
+    """
+    # Abrir la imagen
+    image = Image.open(firma_file)
+    
+    if remover_fondo:
+        with st.spinner('Removiendo fondo de la firma...'):
+            # Remover fondo
+            imagen_procesada = remove(image)
+            # Convertir a modo RGBA si no lo está ya
+            if imagen_procesada.mode != 'RGBA':
+                imagen_procesada = imagen_procesada.convert('RGBA')
+    else:
+        imagen_procesada = image
+        
+    # Convertir a BytesIO
+    img_byte_arr = BytesIO()
+    imagen_procesada.save(img_byte_arr, format='PNG')
+    img_byte_arr.seek(0)
+    
+    return img_byte_arr
+
+def mostrar_seccion_firma():
+    """
+    Muestra la sección de carga y procesamiento de firma
+    
+    Returns:
+        BytesIO: Imagen de firma procesada
+        bool: Indicador de si se cargó una firma
+    """
+    st.header("Sube tu firma")
+    
+    # Checkbox para remover fondo
+    remover_fondo = st.checkbox("Remover fondo de la firma", value=False)
+    
+    # Upload de firma
+    firma_file = st.file_uploader(
+        "Selecciona tu imagen de firma", 
+        type=["png", "jpg", "jpeg"],
+        help="Sube una imagen de tu firma en formato PNG, JPG o JPEG"
+    )
+    
+    if firma_file is not None:
+        # Procesar firma
+        firma_procesada = procesar_firma(firma_file, remover_fondo)
+        
+        if remover_fondo:
+            # Mostrar comparación antes/después
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write("Firma Original")
+                st.image(firma_file, width=300)
+            with col2:
+                st.write("Firma sin fondo")
+                st.image(firma_procesada, width=300)
+                
+            # Opcionalmente mostrar comparador deslizante
+            st.write("Comparador deslizante")
+            image_comparison(
+                img1=Image.open(firma_file),
+                img2=Image.open(firma_procesada),
+                label1="Original",
+                label2="Sin fondo"
+            )
+        else:
+            # Mostrar solo la firma original
+            st.image(firma_file, caption="Vista previa de la firma", width=300)
+        
+        return firma_procesada, True
+    
+    return None, False
 
 def generar_cotizacion(pdf_file, data):
     # Extraer datos del PDF
@@ -375,11 +477,7 @@ def main():
     pdf_file = st.file_uploader("Selecciona tu archivo PDF", type=["pdf"])
 
     # Sección de firma
-    st.header("Sube tu firma")
-    firma_file = st.file_uploader("Selecciona tu imagen de firma", type=["png", "jpg", "jpeg"])
-    if firma_file is not None:
-        image = Image.open(firma_file)
-        st.image(image, caption="Vista previa de la firma", width=300)
+    firma_procesada, firma_cargada = mostrar_seccion_firma()
 
     # Inicializar variables de estado si no existen
     if 'form_data' not in st.session_state:
@@ -511,19 +609,26 @@ def main():
         
     # Sección de oferta económica
     st.header("Oferta Económica")
-
+    
+    # Extraer días del PDF si está disponible
+    dias = "30"  # Valor por defecto
+    if pdf_file:
+        dias = extraer_dias(pdf_file)
+    
+    # Obtener el valor sugerido basado en los días
+    valor_sugerido = obtener_valor_sugerido(dias)
+    
     col1, col2 = st.columns([3, 1])
-
     with col1:
         oferta_total = st.number_input(
             "OFERTA TOTAL (S/)",
             min_value=0.0,
-            value=2000.0,  # Valor sugerido inicial
-            step=10.0,     # Incrementos/decrementos de 10
+            value=valor_sugerido,  # Valor sugerido dinámico
+            step=10.0,
             format="%.2f",
-            help="Valor sugerido: S/ 2,000.00. Puedes ajustar el monto usando las flechas (±10) o ingresando directamente el valor deseado."
+            help=f"Valor sugerido: S/ {valor_sugerido:,.2f} para {dias} días. Puedes ajustar el monto usando las flechas (±10) o ingresando directamente el valor deseado."
         )
-
+    
     with col2:
         st.markdown("""
         <style>
@@ -534,15 +639,18 @@ def main():
         </style>
         """, unsafe_allow_html=True)
         
-        st.markdown('<p class="small-font">Sugerido: S/ 2,000.00<br>Incrementos: ± S/ 10.00</p>', unsafe_allow_html=True)
-
+        st.markdown(
+            f'<p class="small-font">Sugerido: S/ {valor_sugerido:,.2f}<br>Incrementos: ± S/ 10.00</p>', 
+            unsafe_allow_html=True
+        )
+    
     # Mostrar el valor ingresado con formato de moneda
     if oferta_total > 0:
         st.write(f"Monto ingresado: S/ {oferta_total:,.2f}")
 
     # Botón de envío
     if st.button("Generar cotizacion"):
-        if not all([pdf_file, firma_file, dni, st.session_state.direccion, telefono, correo, banco_seleccionado, cuenta, cci, oferta_total]):
+        if not all([pdf_file, firma_cargada, dni, st.session_state.direccion, telefono, correo, banco_seleccionado, cuenta, cci, oferta_total]):
             st.error("Por favor, complete todos los campos requeridos.")
         else:
             # Obtener datos de SUNAT
@@ -575,7 +683,7 @@ def main():
                     'fecha': fecha_formateada,
                     'year': fecha_actual.year,
                     'mes': mes_actual,
-                    'firma': firma_file,
+                    'firma': firma_procesada,  # Usar la firma procesada
                 }
 
                 # Generar la cotización
@@ -586,7 +694,9 @@ def main():
                 with zipfile.ZipFile(zip_io, mode='w', compression=zipfile.ZIP_DEFLATED) as zipf:
                     # Agregar el documento de cotización
                     zipf.writestr('Formato de Cotización.docx', doc_io.getvalue())
-                    
+                    # Agregar la firma
+                    firma_procesada.seek(0)  # Reiniciar el puntero del archivo
+                    zipf.writestr('Firma.png', firma_procesada.getvalue())
                     # Agregar el TDR original
                     pdf_file.seek(0)  # Reiniciar el puntero del archivo
                     zipf.writestr('6. Copia de Terminos de Referencia.pdf', pdf_file.getvalue())
