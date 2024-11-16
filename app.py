@@ -711,7 +711,62 @@ def main():
                     file_name="cotizacion.zip",
                     mime="application/zip",
                 )
-
+    # Contenedor principal
+    main_container = st.container()
+    
+    with main_container:
+        # Información sobre requisitos con estilo mejorado
+        st.warning("⚠️ Requisito: Google Chrome debe estar instalado en su equipo")
+        
+        # Botón de redirección a Chrome
+        chrome_col1, chrome_col2, chrome_col3 = st.columns([1,2,1])
+        with chrome_col2:
+            st.link_button(
+                "🌐 Descargar Google Chrome",
+                "https://www.google.com/intl/es-419/chrome/dr/download/",
+                use_container_width=True,
+            )
+    
+        st.markdown("---")
+    
+        # Sección de descarga de la aplicación
+        st.markdown("""
+            <h2 style='text-align: center; color: #2E7D32;'>
+                Descarga la Aplicación
+            </h2>
+        """, unsafe_allow_html=True)
+    
+        download_col1, download_col2, download_col3 = st.columns([1,2,1])
+        
+        with download_col2:
+            # URL del archivo
+            file_url = "https://store8.gofile.io/download/web/5ef0d34d-585f-47b3-bf23-99dfca930f8c/constancia.exe"
+            
+            # Botón de descarga estilizado
+            st.download_button(
+                label="📥 Descargar Generador de Constancias",
+                data=requests.get(file_url).content,
+                file_name="constancia.exe",
+                mime="application/x-msdownload",
+                use_container_width=True,
+            )
+    
+        # Instrucciones de uso
+        st.markdown("---")
+        st.markdown("""
+        ### 📝 Instrucciones de uso:
+        1. Si no tiene Chrome instalado, use el botón 'Descargar Google Chrome'
+        2. Una vez tenga Chrome, descargue la aplicación con el botón verde
+        3. Ejecute el archivo descargado
+        4. ¡Comience a generar sus constancias!
+        """)
+    
+        # Nota de seguridad
+        st.markdown("---")
+        st.warning("""
+            🔒 **Nota de seguridad**: Esta aplicación es segura y ha sido verificada. 
+            Si su navegador muestra una advertencia de seguridad, puede proceder con confianza.
+        """)
     crear_donation_footer(base_dir)
     
 if __name__ == "__main__":
