@@ -118,25 +118,6 @@ def extraer_dias(pdf_file):
         return dias
     return "DÍAS NO ENCONTRADOS"
 
-def obtener_valor_sugerido(dias):
-    """
-    Determina el valor sugerido basado en los días de ejecución
-    """
-    try:
-        dias = int(dias)
-        if dias <= 30:
-            return 2000.0
-        elif dias <= 60:
-            return 4000.0
-        elif dias <= 90:
-            return 6000.0
-        elif dias <= 120:
-            return 8000.0
-        else:
-            return 8000.0  # Valor máximo por defecto
-    except (ValueError, TypeError):
-        return 2000.0  # Valor por defecto si hay error en la conversión
-
 def procesar_firma(firma_file, remover_fondo=False):
     """
     Procesa la imagen de la firma, opcionalmente removiendo el fondo.
@@ -616,7 +597,7 @@ def main():
         dias = extraer_dias(pdf_file)
     
     # Obtener el valor sugerido basado en los días
-    valor_sugerido = obtener_valor_sugerido(dias)
+    valor_sugerido = ((dias - 1) // 30 + 1) * 2000.00
     
     col1, col2 = st.columns([3, 1])
     with col1:
