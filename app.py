@@ -597,7 +597,11 @@ def main():
         dias = extraer_dias(pdf_file)
     
     # Obtener el valor sugerido basado en los días
-    valor_sugerido = ((dias - 1) // 30 + 1) * 2000.00
+    try:
+        dias_int = int(dias)
+        valor_sugerido = ((dias_int - 1) // 30 + 1) * 2000.00
+    except ValueError:
+        valor_sugerido = 2000.00
     
     col1, col2 = st.columns([3, 1])
     with col1:
