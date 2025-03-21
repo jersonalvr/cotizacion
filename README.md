@@ -52,8 +52,6 @@ Se incorporó una funcionalidad avanzada que permite a los usuarios eliminar el 
      key = "TU_CLAVE_API"
      ```
 
-4. Agrega la plantilla de Word (`FormatoCotizacion.docx`) y la imagen de Yape (`yape.png`) en el directorio base de la aplicación.
-
 ## Uso
 
 1. Ejecuta la aplicación:
